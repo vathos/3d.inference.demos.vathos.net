@@ -19,7 +19,6 @@ from imageio import imread
 import requests
 import numpy as np
 
-#from lib.vis import vis_extrinsics
 from lib.backprojection import backproject, unpack_short
 from lib.authentication import get_service_account_token
 from lib.api import get_product, get_file, get_configuration
@@ -49,7 +48,7 @@ if __name__ == '__main__':
   pcl = backproject(0.001 * unpack_short(depth_img_compressed), K)
 
   # run cloud inference
-  url = 'https://staging.api.gke.vathos.net/v1/workflows/votenet'
+  inference_url = 'https://staging.api.gke.vathos.net/v1/workflows/votenet'
   files = {'files': open('./res/test.png', 'rb')}
   values = {
       'product': json.dumps(product),
@@ -58,7 +57,7 @@ if __name__ == '__main__':
 
   tic = perf_counter()
   inference_response = requests.post(
-      url,
+      inference_url,
       files=files,
       data=values,
       headers={'Authorization': 'Bearer ' + token})
@@ -95,7 +94,7 @@ if __name__ == '__main__':
                          vertices[:, 1],
                          vertices[:, 2],
                          mesh.faces,
-                         color=(0.6, 0.2, 0.2), opacity=0.5)
+                         color=(0.6, 0.2, 0.2),
+                         opacity=0.5)
 
   mlab.show()
-  
