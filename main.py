@@ -70,11 +70,6 @@ if __name__ == '__main__':
   logging.info('Got %d detections: %s', len(response_json['detections']),
                response_json['detections'])
 
-  # came2plane
-  cam2plane = np.reshape(np.array(configuration['cam2plane'], dtype='f'),
-                         (4, 4), 'F')
-  plane2cam = np.linalg.inv(cam2plane)
-
   mlab.figure()
   mlab.points3d(pcl[:, 0],
                 pcl[:, 1],
@@ -85,8 +80,8 @@ if __name__ == '__main__':
 
   for detection in response_json['detections']:
 
-    pose = plane2cam @ np.reshape(np.array(detection['frame'], dtype='f'),
-                                  (4, 4), 'F')
+    # pose is in camera coordinates
+    pose = np.reshape(np.array(detection['frame'], dtype='f'), (4, 4), 'F')
     vertices = mesh.vertices @ pose[0:3, 0:3].transpose() + np.ones(
         mesh.vertices.shape) @ np.diag(pose[0:3, 3])
 
